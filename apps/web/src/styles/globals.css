@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --font-sans: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #172033;
+
+  --card: #ffffff;
+  --card-foreground: #172033;
+
+  --popover: #ffffff;
+  --popover-foreground: #172033;
+
+  --primary: #173b63;
+  --primary-foreground: #ffffff;
+
+  --secondary: #edf3f8;
+  --secondary-foreground: #173b63;
+
+  --muted: #f4f6f9;
+  --muted-foreground: #64748b;
+
+  --accent: #e9f3f5;
+  --accent-foreground: #087e8b;
+
+  --destructive: #dc4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #178b98;
+
+  --success: #16845b;
+  --warning: #d99128;
+  --info: #3478c5;
+
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: #0b1120;
+  --foreground: #f1f5f9;
+
+  --card: #131d33;
+  --card-foreground: #f1f5f9;
+
+  --popover: #131d33;
+  --popover-foreground: #f1f5f9;
+
+  --primary: #38bdf8;
+  --primary-foreground: #0b1120;
+
+  --secondary: #1e293b;
+  --secondary-foreground: #e2e8f0;
+
+  --muted: #1a263d;
+  --muted-foreground: #94a3b8;
+
+  --accent: #143147;
+  --accent-foreground: #38bdf8;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #22324f;
+  --input: #22324f;
+  --ring: #38bdf8;
+
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --info: #60a5fa;
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  font-family: var(--font-sans);
+  direction: rtl;
+  text-align: right;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+

@@ -1,0 +1,23 @@
+{
+  "name": "nit-help-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "npm --workspace=apps/api run start:dev",
+    "dev:web": "npm --workspace=apps/web run dev",
+    "dev": "npm --workspace=apps/api run start:dev",
+    "build": "npm run --workspaces --if-present build",
+    "test": "npm run --workspaces --if-present test",
+    "prisma:generate": "npm --workspace=apps/api run prisma:generate",
+    "prisma:migrate": "npm --workspace=apps/api run prisma:migrate",
+    "prisma:seed": "npm --workspace=apps/api run prisma:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
