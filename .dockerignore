@@ -7,3 +7,6 @@
 uploads
 coverage
 *.log
+
+**/.env
+**/.env.*
