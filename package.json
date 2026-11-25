@@ -1,23 +1,28 @@
 {
   "name": "nit-help-monorepo",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "workspaces": [
     "packages/*",
     "apps/*"
   ],
   "scripts": {
-    "dev:api": "npm --workspace=apps/api run start:dev",
+    "dev:iam": "node scripts/service-exec.js start:dev iam-service",
+    "dev:core": "node scripts/service-exec.js start:dev core-service",
+    "dev:media": "node scripts/service-exec.js start:dev media-service",
+    "dev:ops": "node scripts/service-exec.js start:dev notifications-ops-service",
+    "dev:services": "concurrently -n iam,core,media,ops -c blue,green,magenta,cyan \"npm run dev:iam\" \"npm run dev:core\" \"npm run dev:media\" \"npm run dev:ops\"",
     "dev:web": "npm --workspace=apps/web run dev",
-    "dev": "npm --workspace=apps/api run start:dev",
-    "build": "npm run --workspaces --if-present build",
+    "dev": "npm run dev:services",
+    "build:packages": "npm --workspace=packages/shared run build && npm --workspace=packages/microservice-common run build",
+    "build": "npm run build:packages && npm --workspace=apps/iam-service run build && npm --workspace=apps/core-service run build && npm --workspace=apps/media-service run build && npm --workspace=apps/notifications-ops-service run build && npm --workspace=apps/web run build",
     "test": "npm run --workspaces --if-present test",
-    "prisma:generate": "npm --workspace=apps/api run prisma:generate",
-    "prisma:migrate": "npm --workspace=apps/api run prisma:migrate",
-    "prisma:seed": "npm --workspace=apps/api run prisma:seed"
+    "test:e2e": "npx ts-node tests/e2e-definition-of-done.ts",
+    "prisma:generate": "node scripts/service-exec.js prisma:generate",
+    "prisma:push": "node scripts/service-exec.js prisma:push",
+    "prisma:seed": "node scripts/service-exec.js prisma:seed"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
 }
-

@@ -1,123 +1,65 @@
-# سامانه تیکتینگ و میز خدمت دانشگاه — NIT-Help
+# NIT-Help — University Ticketing System
 
-سامانه **NIT-Help** یک پلتفرم جامع، مدرن و متمرکز برای ثبت، مدیریت، گردش کار و پاسخ‌گویی به درخواست‌های الکترونیکی جامعه دانشگاهی (دانشجویان، اساتید، کارکنان، کارشناسان و مدیران) می‌باشد.
+A university helpdesk and ticketing platform built with React, TypeScript, NestJS microservices, Nginx API Gateway, RabbitMQ, and PostgreSQL.
 
----
+## Architecture
 
-## ۱. معماری و استک فناوری
+- **Nginx API Gateway** (`gateway/`): Entrypoint on port `4000` handling routing, CORS, and `auth_request` token verification.
+- **IAM Service** (`apps/iam-service`, schema `iam`): Authentication, JWT/refresh token rotation, and user management.
+- **Core Service** (`apps/core-service`, schema `core`): Departments, service catalog, and ticketing workflows.
+- **Media Service** (`apps/media-service`, schema `media`): Attachment upload, storage, and access-checked downloads.
+- **Notifications & Ops Service** (`apps/notifications-ops-service`, schema `ops`): Event-driven notifications, audit logs, and analytics reports.
+- **Web Frontend** (`apps/web`): React + Vite client (`http://localhost:5173`).
 
-### بخش فرانت‌اند (`apps/web`)
-- **فریم‌ورک:** React 18 با TypeScript
-- **ابزار ساخت:** Vite
-- **استایل‌دهی و طراحی:** Tailwind CSS v4 با معماری CSS-first و توکن‌های متغیر معنایی (`@theme`)
-- **سیستم کامپوننت:** برگرفته از shadcn/ui با مؤلفه‌های ماژولار و قابل استفاده مجدد
-- **راست‌چین و زبان:** پشتیبانی کامل و بومی RTL با قلم استاندارد وزیرمتن (Vazirmatn) و ارقام فارسی
-- **مدیریت حالت و کش سرور:** TanStack React Query v5
-- **اعتبارسنجی فرم‌ها:** React Hook Form + Zod
-- **نمودارها و تحلیل‌ها:** Recharts
-- **آیکون‌ها:** Lucide React
-- **اعلان‌های شناور:** Sonner
+## Quick Start
 
-### بخش بک‌اند (`apps/api`)
-- **فریم‌ورک:** Node.js با NestJS و معماری ماژولار Domain-Driven
-- **پایگاه داده:** PostgreSQL 16
-- **ابزار ORM:** Prisma ORM با روابط کامل کلید خارجی، شاخص‌گذاری و اسکریپت Seed تکرارپذیر
-- **احراز هویت و امنیت:** JWT با کوکی‌های امن HTTP-only جهت چرخش رفرش توکن (Refresh Token Rotation)
-- **رمزنگاری گذرواژه:** Bcrypt
-- **سلسله‌مراتب دسترسی (RBAC):** تفکیک دقیق ۵ نقش با گارد‌های سمت سرور و رعایت حریم خصوصی یادداشت‌های داخلی
-- **مستندسازی API:** Swagger / OpenAPI در مسیر `/api/docs`
+### With Docker Compose
 
-### بسته مشترک (`packages/shared`)
-- تایپ‌ها، اینترفیس‌ها، اینام‌ها و اسکیماهای اعتبارسنجی Zod مشترک بین کلاینت و سرور.
-
----
-
-## ۲. حساب‌های کاربری پیش‌فرض (توسعه و ارزیابی)
-
-تمامی حساب‌های زیر در اسکریپت Seed تعریف شده و آماده تست می‌باشند. همچنین در صفحه لاگین دکمه‌های ورود سریع با یک کلیک قرار داده شده است.
-
-| ردیف | نقش سازمانی | نام کاربری | کلمه عبور | ایمیل | واحد مربوطه |
-| :---: | :--- | :--- | :--- | :--- | :--- |
-| ۱ | **مدیر ارشد سامانه** | `admin` | `Admin@123456` | `admin@nit.ac.ir` | مدیریت کل سیستم |
-| ۲ | **مدیر فناوری اطلاعات** | `it_manager` | `Manager@123456` | `it.manager@nit.ac.ir` | مرکز فاوا |
-| ۳ | **مدیر امور آموزشی** | `edu_manager` | `Manager@123456` | `edu.manager@nit.ac.ir` | معاونت آموزشی |
-| ۴ | **مدیر امور پشتیبانی** | `fac_manager` | `Manager@123456` | `facilities.manager@nit.ac.ir` | اداره تأسیسات |
-| ۵ | **کارشناس شبکه و سامانه‌ها** | `it_spec` | `Specialist@123456` | `it.specialist@nit.ac.ir` | مرکز فاوا |
-| ۶ | **کارشناس اداره آموزش** | `edu_spec` | `Specialist@123456` | `edu.specialist@nit.ac.ir` | معاونت آموزشی |
-| ۷ | **کارشناس فنی و تأسیسات** | `fac_spec` | `Specialist@123456` | `fac.specialist@nit.ac.ir` | اداره تأسیسات |
-| ۸ | **دانشجو (درخواست‌کننده)** | `student` | `Student@123456` | `student@nit.ac.ir` | دانشجو |
-| ۹ | **استاد / هیئت علمی** | `faculty` | `Faculty@123456` | `faculty@nit.ac.ir` | دانشکده مهندسی برق |
-
----
-
-## ۳. راهنمای نصب و راه‌اندازی سریع
-
-### پیش‌نیازها
-- Node.js نسخه 20 به بالا
-- Docker Desktop یا PostgreSQL 16 محلی
-
-### مراحل راه‌اندازی گام به گام
-
-۱. **اجرای پایگاه داده با داکر کامپوز:**
 ```bash
-docker compose up -d
-```
-
-۲. **نصب وابستگی‌های مونورپو:**
-```bash
+docker compose up -d --build
 npm install
-```
-
-۳. **همگام‌سازی ساختار دیتابیس با Prisma:**
-```bash
-npx prisma db push --schema=apps/api/prisma/schema.prisma
-```
-
-۴. **تزریق داده‌های اولیه آزمایشی (Seed Data):**
-```bash
-npx ts-node apps/api/prisma/seed.ts
-```
-
-۵. **اجرای همزمان بک‌اند و فرانت‌اند:**
-```bash
-# اجرای بک‌اند (پورت 4000)
-npm run dev:api
-
-# اجرای فرانت‌اند (پورت 5173)
+npm run prisma:generate
+npm run prisma:push
+npm run prisma:seed
 npm run dev:web
 ```
 
-- آدرس فرانت‌اند: [http://localhost:5173](http://localhost:5173)
-- آدرس بک‌اند: [http://localhost:4000/api](http://localhost:4000/api)
-- مستندات سواگر API: [http://localhost:4000/api/docs](http://localhost:4000/api/docs)
+### Local Development
 
----
-
-## ۴. اجرای آزمون‌ها (Automated Testing)
-
-### آزمون‌های بک‌اند:
 ```bash
-npm --prefix apps/api run test
+docker compose up -d postgres rabbitmq nginx-gateway
+npm install
+npm run build:packages
+npm run prisma:generate
+npm run prisma:push
+npm run prisma:seed
+npm run dev:services
+npm run dev:web
 ```
 
-### آزمون‌های فرانت‌اند:
+### URLs
+
+- **Frontend:** http://localhost:5173
+- **API Gateway:** http://localhost:4000/api
+- **Swagger Docs:** http://localhost:4000/api/docs
+- **RabbitMQ Management:** http://localhost:15672 (`guest` / `guest`)
+
+## Default Seed Accounts
+
+| Role | Username(s) | Password |
+| :--- | :--- | :--- |
+| Admin | `admin` | `Admin@123456` |
+| Manager | `it_manager`, `edu_manager`, `fac_manager` | `Manager@123456` |
+| Specialist | `it_spec`, `edu_spec`, `fac_spec` | `Specialist@123456` |
+| Student | `student` | `Student@123456` |
+| Faculty | `faculty` | `Faculty@123456` |
+
+## Testing
+
 ```bash
-npm --prefix apps/web test
+# Unit tests across all workspaces
+npm test
+
+# End-to-end 20-step workflow via Nginx Gateway
+npm run test:e2e
 ```
-
-### آزمون سرتاسری سناریوی ۲۰ مرحله‌ای (Definition of Done E2E):
-```bash
-npx ts-node apps/api/test/e2e-definition-of-done.ts
-```
-
-این اسکریپت تمام ۲۰ مرحله تعریف کامل پروژه (از لاگین دانشجو، مشاهده کاتالوگ، ثبت تیکت، شماره‌گذاری یکتا، گردش کار تخصیص کارشناس، تغییر وضعیت به در حال بررسی، تبادل پاسخ عمومی و یادداشت محرمانه داخلی، حل تیکت، ثبت نظرسنجی و مشاهده گزارش‌های آماری مدیران) را به شکل کاملاً خودکار روی پایگاه داده بررسی و تایید می‌نماید.
-
----
-
-## ۵. امنیت و حریم خصوصی داده‌ها
-
-- **تفکیک یادداشت‌های داخلی:** یادداشت‌های داخلی کارشناسان (`isInternal: true`) با فیلتر لایه سرویس کنترل شده و هرگز در کوئری‌ها یا پاسخ به دانشجویان ارسال نمی‌شود.
-- **ایزوله‌سازی صف درخواست‌ها:** هر دانشجو و استاد صرفاً به تیکت‌های ایجاد شده توسط خود دسترسی دارند.
-- **کنترل دسترسی سطح واحد:** کارشناسان به تیکت‌های سایر دپارتمان‌های غیرمرتبط دسترسی ندارند.
-- **حفاظت در برابر جعل درخواست و XSS:** استفاده از کوکی‌های HTTP-Only با تنظیمات لاگین امن و اعتبارسنجی سخت‌گیرانه تایپ‌ها در ورودی.
-

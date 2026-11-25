@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/ops-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  FACULTY
+  SPECIALIST
+  MANAGER
+  ADMIN
+}
+
+enum TicketStatus {
+  NEW
+  ASSIGNED
+  IN_PROGRESS
+  WAITING_FOR_REQUESTER
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum NotificationType {
+  TICKET_CREATED
+  TICKET_ASSIGNED
+  TICKET_REASSIGNED
+  STATUS_CHANGED
+  MESSAGE_RECEIVED
+  INFO_REQUESTED
+  TICKET_RESOLVED
+  OBJECTION_SUBMITTED
+  OBJECTION_ANSWERED
+}
+
+model Notification {
+  id          String           @id @default(uuid())
+  recipientId String
+  ticketId    String?
+  type        NotificationType
+  title       String
+  message     String
+  isRead      Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+
+  @@index([recipientId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String
+  actorName  String
+  actorEmail String
+  actorRole  UserRole
+  action     String
+  entityType String
+  entityId   String
+  metadata   String?
+  createdAt  DateTime @default(now())
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model TicketAnalytics {
+  ticketId       String         @id
+  ticketNumber   String         @unique
+  departmentId   String
+  departmentName String
+  serviceId      String
+  assignedToId   String?
+  status         TicketStatus
+  priority       TicketPriority
+  createdAt      DateTime
+  resolvedAt     DateTime?
+  closedAt       DateTime?
+  updatedAt      DateTime
+
+  @@index([departmentId])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([priority])
+  @@index([createdAt])
+}
+
+model DepartmentAnalytics {
+  departmentId String   @id
+  name         String
+  code         String
+  isActive     Boolean  @default(true)
+  updatedAt    DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model UserAnalytics {
+  userId         String   @id
+  fullName       String
+  email          String
+  role           UserRole
+  departmentId   String?
+  departmentName String?
+  isActive       Boolean  @default(true)
+  updatedAt      DateTime @updatedAt
+
+  @@index([role])
+  @@index([departmentId])
+  @@index([isActive])
+}
+
+model ProcessedEvent {
+  eventId     String   @id
+  eventType   String
+  processedAt DateTime @default(now())
+
+  @@index([eventType])
+}

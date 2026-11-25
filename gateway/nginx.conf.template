@@ -1,0 +1,167 @@
+map $http_origin $cors_origin {
+    default "";
+    ~^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$ $http_origin;
+    "${FRONTEND_URL}" $http_origin;
+}
+
+upstream iam_service {
+    server ${IAM_UPSTREAM};
+}
+
+upstream core_service {
+    server ${CORE_UPSTREAM};
+}
+
+upstream media_service {
+    server ${MEDIA_UPSTREAM};
+}
+
+upstream notifications_ops_service {
+    server ${OPS_UPSTREAM};
+}
+
+server {
+    listen 4000;
+    server_name _;
+
+    set $gateway_secret "${GATEWAY_INTERNAL_SECRET}";
+    client_max_body_size 25m;
+
+    # Gateway Health Check
+    location = /api/health {
+        include /etc/nginx/snippets/cors.conf;
+        default_type application/json;
+        return 200 '{"status":"ok","gateway":"nginx","services":["iam","core","media","notifications-ops"]}';
+    }
+
+    # Gateway API Documentation Index
+    location = /api/docs {
+        root /usr/share/nginx/html;
+        try_files /docs.html =404;
+    }
+
+    # Per-service Swagger UI and OpenAPI JSON
+    location /api/iam/docs {
+        proxy_pass http://iam_service;
+        include /etc/nginx/snippets/proxy-common.conf;
+    }
+    location /api/core/docs {
+        proxy_pass http://core_service;
+        include /etc/nginx/snippets/proxy-common.conf;
+    }
+    location /api/media/docs {
+        proxy_pass http://media_service;
+        include /etc/nginx/snippets/proxy-common.conf;
+    }
+    location /api/ops/docs {
+        proxy_pass http://notifications_ops_service;
+        include /etc/nginx/snippets/proxy-common.conf;
+    }
+
+    # Per-service Health Checks
+    location = /api/iam/health {
+        include /etc/nginx/snippets/cors.conf;
+        proxy_pass http://iam_service/api/health;
+        include /etc/nginx/snippets/proxy-common.conf;
+    }
+    location = /api/core/health {
+        include /etc/nginx/snippets/cors.conf;
+        proxy_pass http://core_service/api/health;
+        include /etc/nginx/snippets/proxy-common.conf;
+    }
+    location = /api/media/health {
+        include /etc/nginx/snippets/cors.conf;
+        proxy_pass http://media_service/api/health;
+        include /etc/nginx/snippets/proxy-common.conf;
+    }
+    location = /api/ops/health {
+        include /etc/nginx/snippets/cors.conf;
+        proxy_pass http://notifications_ops_service/api/health;
+        include /etc/nginx/snippets/proxy-common.conf;
+    }
+
+    # Internal Auth Verification Endpoint for Nginx auth_request
+    location = /_auth_verify {
+        internal;
+        proxy_pass http://iam_service/api/auth/verify;
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        proxy_set_header Host $http_host;
+        proxy_set_header Authorization $http_authorization;
+        proxy_set_header X-Original-URI $request_uri;
+        proxy_set_header X-Original-Method $request_method;
+        proxy_set_header X-Gateway-Secret $gateway_secret;
+    }
+
+    # Block direct external calls to the internal verify endpoint
+    location = /api/auth/verify {
+        include /etc/nginx/snippets/cors.conf;
+        default_type application/json;
+        return 404 '{"statusCode":404,"message":"Not Found"}';
+    }
+
+    # JSON 401 handler when auth_request denies access
+    error_page 401 = @unauthorized;
+    location @unauthorized {
+        add_header 'Access-Control-Allow-Origin' "$cors_origin" always;
+        add_header 'Access-Control-Allow-Credentials' 'true' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, X-Requested-With' always;
+        default_type application/json;
+        return 401 '{"statusCode":401,"message":"لطفاً جهت دسترسی به این بخش وارد سامانه شوید"}';
+    }
+
+    # 1. IAM Service - Auth routes (public login/refresh/logout + /me)
+    location /api/auth {
+        include /etc/nginx/snippets/cors.conf;
+        include /etc/nginx/snippets/proxy-common.conf;
+        proxy_set_header X-User-Context "";
+        proxy_set_header X-Gateway-Secret "";
+        proxy_pass http://iam_service;
+    }
+
+    # 1b. IAM Service - Users routes (protected via auth_request)
+    location /api/users {
+        include /etc/nginx/snippets/protected-auth.conf;
+        proxy_pass http://iam_service;
+    }
+
+    # 2. Core Service - Departments, Services Catalog, Tickets
+    location /api/departments {
+        include /etc/nginx/snippets/protected-auth.conf;
+        proxy_pass http://core_service;
+    }
+
+    location /api/services {
+        include /etc/nginx/snippets/protected-auth.conf;
+        proxy_pass http://core_service;
+    }
+
+    location /api/tickets {
+        include /etc/nginx/snippets/protected-auth.conf;
+        proxy_pass http://core_service;
+    }
+
+    # 3. Media Service - Attachments Upload & Download
+    location /api/attachments {
+        include /etc/nginx/snippets/protected-auth.conf;
+        proxy_request_buffering off;
+        proxy_pass http://media_service;
+    }
+
+    # 4. Notifications & Ops Service - Notifications, Audit, Reports
+    location /api/notifications {
+        include /etc/nginx/snippets/protected-auth.conf;
+        proxy_pass http://notifications_ops_service;
+    }
+
+    location /api/audit {
+        include /etc/nginx/snippets/protected-auth.conf;
+        proxy_pass http://notifications_ops_service;
+    }
+
+    location /api/reports {
+        include /etc/nginx/snippets/protected-auth.conf;
+        proxy_pass http://notifications_ops_service;
+    }
+}

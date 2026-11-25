@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NIT-Help Microservices API Gateway Docs</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 2rem; }
+    .container { max-width: 880px; margin: 0 auto; }
+    h1 { color: #38bdf8; margin-bottom: 0.5rem; }
+    p { color: #94a3b8; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 2rem; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.25rem; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; display: block; }
+    .card:hover { border-color: #38bdf8; transform: translateY(-2px); }
+    .badge { display: inline-block; font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 999px; background: #0ea5e922; color: #38bdf8; margin-bottom: 0.75rem; font-family: monospace; }
+    h2 { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
+    .routes { font-family: monospace; font-size: 0.8rem; color: #cbd5e1; margin-top: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>NIT-Help Microservices API Gateway (Nginx)</h1>
+    <p>مستندات OpenAPI / Swagger سرویس‌های معماری میکروسرویس سامانه تیکتینگ دانشگاه</p>
+    <div class="grid">
+      <a class="card" href="/api/iam/docs">
+        <span class="badge">IAM Service :4001</span>
+        <h2>سرویس احراز هویت و کاربران</h2>
+        <p>ورود، چرخش توکن JWT، بررسی اعتبار توکن برای Nginx و مدیریت کاربران و نقش‌ها</p>
+        <div class="routes">/api/auth/* &bull; /api/users/*</div>
+      </a>
+      <a class="card" href="/api/core/docs">
+        <span class="badge">Core Service :4002</span>
+        <h2>سرویس هسته (کاتالوگ و تیکتینگ)</h2>
+        <p>دپارتمان‌ها، دسته‌بندی و خدمات، ثبت و گردش کار تیکت، پیام‌ها، نظرسنجی و اعتراضات</p>
+        <div class="routes">/api/departments/* &bull; /api/services/* &bull; /api/tickets/*</div>
+      </a>
+      <a class="card" href="/api/media/docs">
+        <span class="badge">Media Service :4003</span>
+        <h2>سرویس مدیریت فایل و پیوست‌ها</h2>
+        <p>آپلود چندبخشی، کنترل دسترسی و دانلود امن فایل‌های پیوست تیکت‌ها</p>
+        <div class="routes">/api/attachments/*</div>
+      </a>
+      <a class="card" href="/api/ops/docs">
+        <span class="badge">Notifications &amp; Ops :4004</span>
+        <h2>سرویس اعلان‌ها، حسابرسی و گزارش‌ها</h2>
+        <p>پردازش رویدادمحور اعلان‌ها، لاگ‌های امنیتی و داشبوردهای تحلیلی CQRS</p>
+        <div class="routes">/api/notifications/* &bull; /api/audit/* &bull; /api/reports/*</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
