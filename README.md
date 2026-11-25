@@ -2,14 +2,17 @@
 
 A university helpdesk and ticketing platform built with React, TypeScript, NestJS microservices, Nginx API Gateway, RabbitMQ, and PostgreSQL.
 
-## Architecture
+## Structure
 
-- **Nginx API Gateway** (`gateway/`): Entrypoint on port `4000` handling routing, CORS, and `auth_request` token verification.
-- **IAM Service** (`apps/iam-service`, schema `iam`): Authentication, JWT/refresh token rotation, and user management.
-- **Core Service** (`apps/core-service`, schema `core`): Departments, service catalog, and ticketing workflows.
-- **Media Service** (`apps/media-service`, schema `media`): Attachment upload, storage, and access-checked downloads.
-- **Notifications & Ops Service** (`apps/notifications-ops-service`, schema `ops`): Event-driven notifications, audit logs, and analytics reports.
-- **Web Frontend** (`apps/web`): React + Vite client (`http://localhost:5173`).
+- `frontend/` — React + Vite web client (`http://localhost:5173`)
+- `backend/gateway/` — Nginx API Gateway (port `4000`, routing, CORS, `auth_request`)
+- `backend/common/` — Shared backend NestJS guards, RabbitMQ event bus, and contracts
+- `backend/services/`
+  - `iam-service/` (schema `iam`) — Authentication, JWT/refresh rotation, users
+  - `core-service/` (schema `core`) — Departments, service catalog, ticketing
+  - `media-service/` (schema `media`) — Attachment upload, storage, and downloads
+  - `notifications-ops-service/` (schema `ops`) — Notifications, audit logs, reports
+- `packages/shared/` — Cross-stack TypeScript types, enums, and Zod schemas
 
 ## Quick Start
 

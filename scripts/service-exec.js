@@ -66,7 +66,7 @@ if (selected.length === 0) {
 }
 
 for (const svc of selected) {
-  const svcDir = path.join(ROOT_DIR, 'apps', svc.name);
+  const svcDir = path.join(ROOT_DIR, 'backend', 'services', svc.name);
   const dbUrl = resolveDatabaseUrl(svc);
 
   if (action === 'prisma:generate') {

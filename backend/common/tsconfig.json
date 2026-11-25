@@ -10,18 +10,12 @@
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": "./",
-    "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@nit-help/shared": ["../../packages/shared/dist/index"],
-      "@nit-help/microservice-common": ["../../packages/microservice-common/dist/index"]
+      "@nit-help/shared": ["../../packages/shared/dist/index"]
     }
   },
-  "exclude": ["node_modules", "dist", "prisma", "**/*.spec.ts"]
+  "include": ["src/**/*"]
 }

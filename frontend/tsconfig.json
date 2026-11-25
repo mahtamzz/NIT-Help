@@ -18,7 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@nit-help/shared": ["../../packages/shared/src/index.ts"]
+      "@nit-help/shared": ["../packages/shared/src/index.ts"]
     }
   },
   "include": ["src"],

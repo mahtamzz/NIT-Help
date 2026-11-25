@@ -1,3 +1,10 @@
+x-proxy-args: &proxy-args
+  HTTP_PROXY: ${HTTP_PROXY:-}
+  HTTPS_PROXY: ${HTTPS_PROXY:-}
+  http_proxy: ${http_proxy:-}
+  https_proxy: ${https_proxy:-}
+  NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1,::1}
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -11,7 +18,7 @@ services:
       - "5432:5432"
     volumes:
       - nit_pg_data:/var/lib/postgresql/data
-      - ./infra/postgres/init-schemas.sql:/docker-entrypoint-initdb.d/01-init-schemas.sql:ro
+      - ./infra/postgres/init-schemas.sql:/docker-entrypoint-initdb.d/01-init-schemas.sql:ro,z
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d nit_help"]
       interval: 5s
@@ -40,8 +47,10 @@ services:
     build:
       context: .
       dockerfile: infra/docker/service.Dockerfile
+      network: host
       args:
-        SERVICE_DIR: apps/iam-service
+        <<: *proxy-args
+        SERVICE_DIR: backend/services/iam-service
     container_name: nit-help-iam-service
     restart: always
     environment:
@@ -71,8 +80,10 @@ services:
     build:
       context: .
       dockerfile: infra/docker/service.Dockerfile
+      network: host
       args:
-        SERVICE_DIR: apps/core-service
+        <<: *proxy-args
+        SERVICE_DIR: backend/services/core-service
     container_name: nit-help-core-service
     restart: always
     environment:
@@ -101,8 +112,10 @@ services:
     build:
       context: .
       dockerfile: infra/docker/service.Dockerfile
+      network: host
       args:
-        SERVICE_DIR: apps/media-service
+        <<: *proxy-args
+        SERVICE_DIR: backend/services/media-service
     container_name: nit-help-media-service
     restart: always
     environment:
@@ -113,7 +126,7 @@ services:
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
       CORE_TCP_HOST: core-service
       CORE_TCP_PORT: 4102
-      UPLOAD_DIR: /app/apps/media-service/uploads
+      UPLOAD_DIR: /app/backend/services/media-service/uploads
       MAX_FILE_SIZE: ${MAX_FILE_SIZE:-10485760}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-nit_help_jwt_access_super_secret_key_2026_secure!}
       GATEWAY_INTERNAL_SECRET: ${GATEWAY_INTERNAL_SECRET:-nit_help_gateway_internal_secret_2026!}
@@ -122,7 +135,7 @@ services:
       - "4003:4003"
       - "4103:4103"
     volumes:
-      - nit_media_uploads:/app/apps/media-service/uploads
+      - nit_media_uploads:/app/backend/services/media-service/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -133,8 +146,10 @@ services:
     build:
       context: .
       dockerfile: infra/docker/service.Dockerfile
+      network: host
       args:
-        SERVICE_DIR: apps/notifications-ops-service
+        <<: *proxy-args
+        SERVICE_DIR: backend/services/notifications-ops-service
     container_name: nit-help-notifications-ops-service
     restart: always
     environment:
@@ -161,7 +176,7 @@ services:
 
   nginx-gateway:
     build:
-      context: ./gateway
+      context: ./backend/gateway
       dockerfile: Dockerfile
     container_name: nit-help-nginx-gateway
     restart: always

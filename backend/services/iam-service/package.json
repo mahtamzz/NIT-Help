@@ -55,8 +55,8 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "moduleNameMapper": {
-      "^@nit-help/shared$": "<rootDir>/../../../packages/shared/src/index.ts",
-      "^@nit-help/microservice-common$": "<rootDir>/../../../packages/microservice-common/src/index.ts"
+      "^@nit-help/shared$": "<rootDir>/../../../../packages/shared/src/index.ts",
+      "^@nit-help/microservice-common$": "<rootDir>/../../../common/src/index.ts"
     },
     "testEnvironment": "node"
   }

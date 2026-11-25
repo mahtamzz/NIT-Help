@@ -4,7 +4,9 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "frontend",
+    "backend/common",
+    "backend/services/*"
   ],
   "scripts": {
     "dev:iam": "node scripts/service-exec.js start:dev iam-service",
@@ -12,10 +14,10 @@
     "dev:media": "node scripts/service-exec.js start:dev media-service",
     "dev:ops": "node scripts/service-exec.js start:dev notifications-ops-service",
     "dev:services": "concurrently -n iam,core,media,ops -c blue,green,magenta,cyan \"npm run dev:iam\" \"npm run dev:core\" \"npm run dev:media\" \"npm run dev:ops\"",
-    "dev:web": "npm --workspace=apps/web run dev",
+    "dev:web": "npm --workspace=frontend run dev",
     "dev": "npm run dev:services",
-    "build:packages": "npm --workspace=packages/shared run build && npm --workspace=packages/microservice-common run build",
-    "build": "npm run build:packages && npm --workspace=apps/iam-service run build && npm --workspace=apps/core-service run build && npm --workspace=apps/media-service run build && npm --workspace=apps/notifications-ops-service run build && npm --workspace=apps/web run build",
+    "build:packages": "npm --workspace=packages/shared run build && npm --workspace=backend/common run build",
+    "build": "npm run build:packages && npm --workspace=backend/services/iam-service run build && npm --workspace=backend/services/core-service run build && npm --workspace=backend/services/media-service run build && npm --workspace=backend/services/notifications-ops-service run build && npm --workspace=frontend run build",
     "test": "npm run --workspaces --if-present test",
     "test:e2e": "npx ts-node tests/e2e-definition-of-done.ts",
     "prisma:generate": "node scripts/service-exec.js prisma:generate",

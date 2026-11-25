@@ -9,7 +9,7 @@ export class CoreRpcController {
   constructor(
     private readonly ticketQueries: TicketInternalQueriesUseCase,
     private readonly departmentsService: DepartmentsService,
-  ) {}
+  ) { }
 
   @MessagePattern(CORE_PATTERNS.GET_TICKET_ACCESS_CONTEXT)
   getTicketAccessContext(@Payload() data: TicketAccessContextRequest) {
