@@ -10,7 +10,6 @@ export interface AuthUser {
   role: UserRole;
   departmentId?: string | null;
   departmentName?: string | null;
-  createdAt: string;
 }
 
 interface AuthContextType {

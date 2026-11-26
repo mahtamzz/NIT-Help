@@ -9,7 +9,6 @@ export interface UserSummary {
   isActive: boolean;
   departmentId?: string | null;
   departmentName?: string | null;
-  createdAt: string;
 }
 
 export interface DepartmentSummary {
@@ -22,7 +21,6 @@ export interface DepartmentSummary {
   isActive: boolean;
   servicesCount?: number;
   openTicketsCount?: number;
-  createdAt: string;
 }
 
 export interface ServiceCategorySummary {
@@ -58,7 +56,6 @@ export interface TicketAttachmentSummary {
   storageKey: string;
   mimeType: string;
   size: number;
-  createdAt: string;
 }
 
 export interface TicketMessageSummary {

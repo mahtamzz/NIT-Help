@@ -1,4 +1,4 @@
--- Create isolated PostgreSQL schemas for each NIT-Help microservice
+-- Create isolated PostgreSQL schemas for each microservice
 CREATE SCHEMA IF NOT EXISTS iam;
 CREATE SCHEMA IF NOT EXISTS core;
 CREATE SCHEMA IF NOT EXISTS media;
