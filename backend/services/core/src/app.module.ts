@@ -15,7 +15,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ServicesModule } from './services/services.module';
 import { TicketsModule } from './tickets/tickets.module';
 
-const HealthController = createHealthController('core-service');
+const HealthController = createHealthController('core');
 
 @Module({
   imports: [
@@ -40,4 +40,4 @@ const HealthController = createHealthController('core-service');
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

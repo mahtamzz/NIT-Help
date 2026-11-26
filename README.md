@@ -8,10 +8,10 @@ A university helpdesk and ticketing platform built with React, TypeScript, NestJ
 - `backend/gateway/` — Nginx API Gateway (port `4000`, routing, CORS, `auth_request`)
 - `backend/common/` — Shared backend NestJS guards, RabbitMQ event bus, and contracts
 - `backend/services/`
-  - `iam-service/` (schema `iam`) — Authentication, JWT/refresh rotation, users
-  - `core-service/` (schema `core`) — Departments, service catalog, ticketing
-  - `media-service/` (schema `media`) — Attachment upload, storage, and downloads
-  - `notifications-ops-service/` (schema `ops`) — Notifications, audit logs, reports
+  - `iam/` (schema `iam`) — Authentication, JWT/refresh rotation, users
+  - `core/` (schema `core`) — Departments, service catalog, ticketing
+  - `media/` (schema `media`) — Attachment upload, storage, and downloads
+  - `notifications-ops/` (schema `ops`) — Notifications, audit logs, reports
 - `packages/shared/` — Cross-stack TypeScript types, enums, and Zod schemas
 
 ## Quick Start

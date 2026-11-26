@@ -22,11 +22,11 @@ function loadEnvFile() {
 }
 
 const SERVICES = [
-  { name: 'iam-service', schema: 'iam', envKey: 'IAM_DATABASE_URL', hasSeed: true },
-  { name: 'core-service', schema: 'core', envKey: 'CORE_DATABASE_URL', hasSeed: true },
-  { name: 'media-service', schema: 'media', envKey: 'MEDIA_DATABASE_URL', hasSeed: false },
+  { name: 'iam', schema: 'iam', envKey: 'IAM_DATABASE_URL', hasSeed: true },
+  { name: 'core', schema: 'core', envKey: 'CORE_DATABASE_URL', hasSeed: true },
+  { name: 'media', schema: 'media', envKey: 'MEDIA_DATABASE_URL', hasSeed: false },
   {
-    name: 'notifications-ops-service',
+    name: 'notifications-ops',
     schema: 'ops',
     envKey: 'OPS_DATABASE_URL',
     hasSeed: true,

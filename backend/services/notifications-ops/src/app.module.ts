@@ -13,7 +13,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ReportsModule } from './reports/reports.module';
 
-const HealthController = createHealthController('notifications-ops-service');
+const HealthController = createHealthController('notifications-ops');
 
 @Module({
   imports: [
@@ -37,4 +37,4 @@ const HealthController = createHealthController('notifications-ops-service');
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

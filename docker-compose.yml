@@ -20,7 +20,7 @@ services:
       - nit_pg_data:/var/lib/postgresql/data
       - ./infra/postgres/init-schemas.sql:/docker-entrypoint-initdb.d/01-init-schemas.sql:ro,z
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d nit_help"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d nit_help" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -38,20 +38,20 @@ services:
     volumes:
       - nit_rmq_data:/var/lib/rabbitmq
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 10
 
-  iam-service:
+  iam:
     build:
       context: .
       dockerfile: infra/docker/service.Dockerfile
       network: host
       args:
         <<: *proxy-args
-        SERVICE_DIR: backend/services/iam-service
-    container_name: nit-help-iam-service
+        SERVICE_DIR: backend/services/iam
+    container_name: nit-help-iam
     restart: always
     environment:
       NODE_ENV: ${NODE_ENV:-development}
@@ -59,7 +59,7 @@ services:
       IAM_TCP_PORT: 4101
       DATABASE_URL: postgresql://postgres:password123@postgres:5432/nit_help?schema=iam
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      CORE_TCP_HOST: core-service
+      CORE_TCP_HOST: core
       CORE_TCP_PORT: 4102
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-nit_help_jwt_access_super_secret_key_2026_secure!}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-nit_help_jwt_refresh_super_secret_key_2026_secure!}
@@ -76,15 +76,15 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  core-service:
+  core:
     build:
       context: .
       dockerfile: infra/docker/service.Dockerfile
       network: host
       args:
         <<: *proxy-args
-        SERVICE_DIR: backend/services/core-service
-    container_name: nit-help-core-service
+        SERVICE_DIR: backend/services/core
+    container_name: nit-help-core
     restart: always
     environment:
       NODE_ENV: ${NODE_ENV:-development}
@@ -92,9 +92,9 @@ services:
       CORE_TCP_PORT: 4102
       DATABASE_URL: postgresql://postgres:password123@postgres:5432/nit_help?schema=core
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      IAM_TCP_HOST: iam-service
+      IAM_TCP_HOST: iam
       IAM_TCP_PORT: 4101
-      MEDIA_TCP_HOST: media-service
+      MEDIA_TCP_HOST: media
       MEDIA_TCP_PORT: 4103
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-nit_help_jwt_access_super_secret_key_2026_secure!}
       GATEWAY_INTERNAL_SECRET: ${GATEWAY_INTERNAL_SECRET:-nit_help_gateway_internal_secret_2026!}
@@ -108,15 +108,15 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  media-service:
+  media:
     build:
       context: .
       dockerfile: infra/docker/service.Dockerfile
       network: host
       args:
         <<: *proxy-args
-        SERVICE_DIR: backend/services/media-service
-    container_name: nit-help-media-service
+        SERVICE_DIR: backend/services/media
+    container_name: nit-help-media
     restart: always
     environment:
       NODE_ENV: ${NODE_ENV:-development}
@@ -124,9 +124,9 @@ services:
       MEDIA_TCP_PORT: 4103
       DATABASE_URL: postgresql://postgres:password123@postgres:5432/nit_help?schema=media
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      CORE_TCP_HOST: core-service
+      CORE_TCP_HOST: core
       CORE_TCP_PORT: 4102
-      UPLOAD_DIR: /app/backend/services/media-service/uploads
+      UPLOAD_DIR: /app/backend/services/media/uploads
       MAX_FILE_SIZE: ${MAX_FILE_SIZE:-10485760}
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-nit_help_jwt_access_super_secret_key_2026_secure!}
       GATEWAY_INTERNAL_SECRET: ${GATEWAY_INTERNAL_SECRET:-nit_help_gateway_internal_secret_2026!}
@@ -135,22 +135,22 @@ services:
       - "4003:4003"
       - "4103:4103"
     volumes:
-      - nit_media_uploads:/app/backend/services/media-service/uploads
+      - nit_media_uploads:/app/backend/services/media/uploads
     depends_on:
       postgres:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
 
-  notifications-ops-service:
+  notifications-ops:
     build:
       context: .
       dockerfile: infra/docker/service.Dockerfile
       network: host
       args:
         <<: *proxy-args
-        SERVICE_DIR: backend/services/notifications-ops-service
-    container_name: nit-help-notifications-ops-service
+        SERVICE_DIR: backend/services/notifications-ops
+    container_name: nit-help-notifications-ops
     restart: always
     environment:
       NODE_ENV: ${NODE_ENV:-development}
@@ -158,9 +158,9 @@ services:
       OPS_TCP_PORT: 4104
       DATABASE_URL: postgresql://postgres:password123@postgres:5432/nit_help?schema=ops
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      IAM_TCP_HOST: iam-service
+      IAM_TCP_HOST: iam
       IAM_TCP_PORT: 4101
-      CORE_TCP_HOST: core-service
+      CORE_TCP_HOST: core
       CORE_TCP_PORT: 4102
       JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-nit_help_jwt_access_super_secret_key_2026_secure!}
       GATEWAY_INTERNAL_SECRET: ${GATEWAY_INTERNAL_SECRET:-nit_help_gateway_internal_secret_2026!}
@@ -181,19 +181,19 @@ services:
     container_name: nit-help-nginx-gateway
     restart: always
     environment:
-      IAM_UPSTREAM: iam-service:4001
-      CORE_UPSTREAM: core-service:4002
-      MEDIA_UPSTREAM: media-service:4003
-      OPS_UPSTREAM: notifications-ops-service:4004
+      IAM_UPSTREAM: iam:4001
+      CORE_UPSTREAM: core:4002
+      MEDIA_UPSTREAM: media:4003
+      OPS_UPSTREAM: notifications-ops:4004
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
       GATEWAY_INTERNAL_SECRET: ${GATEWAY_INTERNAL_SECRET:-nit_help_gateway_internal_secret_2026!}
     ports:
       - "4000:4000"
     depends_on:
-      - iam-service
-      - core-service
-      - media-service
-      - notifications-ops-service
+      - iam
+      - core
+      - media
+      - notifications-ops
 
 volumes:
   nit_pg_data:

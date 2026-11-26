@@ -11,7 +11,7 @@ import { AttachmentsModule } from './attachments/attachments.module';
 import { MediaRpcController } from './media-rpc.controller';
 import { PrismaModule } from './prisma/prisma.module';
 
-const HealthController = createHealthController('media-service');
+const HealthController = createHealthController('media');
 
 @Module({
   imports: [
@@ -32,4 +32,4 @@ const HealthController = createHealthController('media-service');
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

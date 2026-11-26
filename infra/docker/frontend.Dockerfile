@@ -11,10 +11,10 @@ COPY frontend/package.json ./frontend/
 COPY packages/shared/package.json ./packages/shared/
 COPY backend/common/package.json ./backend/common/
 
-COPY backend/services/iam-service/package.json ./backend/services/iam-service/
-COPY backend/services/core-service/package.json ./backend/services/core-service/
-COPY backend/services/media-service/package.json ./backend/services/media-service/
-COPY backend/services/notifications-ops-service/package.json ./backend/services/notifications-ops-service/
+COPY backend/services/iam/package.json ./backend/services/iam/
+COPY backend/services/core/package.json ./backend/services/core/
+COPY backend/services/media/package.json ./backend/services/media/
+COPY backend/services/notifications-ops/package.json ./backend/services/notifications-ops/
 
 # Install all workspace dependencies
 RUN npm ci
